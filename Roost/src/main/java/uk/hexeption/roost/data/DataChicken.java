@@ -10,7 +10,11 @@ import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import uk.hexeption.roost.setup.ModItems;
 
 public class DataChicken {
@@ -99,7 +103,7 @@ public class DataChicken {
 		this.i18nName = i18nName;
 	}
 
-	public void addInfoToTooltip(List<String> tooltip) {
+	public void addInfoToTooltip(List<ITextComponent> tooltip) {
 	}
 
 	public boolean hasParents() {
@@ -125,4 +129,67 @@ public class DataChicken {
 	public CompoundNBT buildTooltipNBT() {
 		return null;
 	}
+
+	public void spawnEntity(World world, BlockPos pos) {
+	}
+
+	public String getChickenType() {
+		return null;
+	}
+
+	public String getTextureName() {
+		return null;
+	}
+
+	private static ItemStack createChildStack(DataChicken chickenA, DataChicken chickenB, World world) {
+		if (chickenA.getClass() != chickenB.getClass()) {
+			return chickenA.buildChickenStack();
+		}
+		ChickenEntity parentA = chickenA.buildEntity(world);
+		ChickenEntity parentB = chickenB.buildEntity(world);
+		if (parentA == null || parentB == null) {
+			return ItemStack.EMPTY;
+		}
+		DataChicken childData = DataChicken.getDataFromEntity(parentA.func_241840_a((ServerWorld) world, parentB));
+		if (childData == null) {
+			return ItemStack.EMPTY;
+		}
+		return childData.buildChickenStack();
+	}
+
+	public ItemStack createChildStack(DataChicken other, World world) {
+		if (rand.nextBoolean()) {
+			return createChildStack(this, other, world);
+		}
+		return createChildStack(other, this, world);
+	}
+
+	public ItemStack createDropStack() {
+		return ItemStack.EMPTY;
+	}
+
+	public int getAddedTime(ItemStack stack) {
+		return Math.max(0, stack.getCount());
+	}
+
+	public int getLayTime() {
+		return 6000 + rand.nextInt(6000);
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public ITextComponent getDisplayName() {
+		return new TranslationTextComponent(i18nName);
+	}
+
+	public boolean isEqual(DataChicken other) {
+		return true;
+	}
+
+	public ITextComponent getDisplaySummary() {
+		return getDisplayName();
+	}
+
 }

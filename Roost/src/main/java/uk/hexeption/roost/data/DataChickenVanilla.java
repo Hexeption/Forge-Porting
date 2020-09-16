@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -11,6 +12,7 @@ import net.minecraft.item.SpawnEggItem;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import org.apache.commons.lang3.NotImplementedException;
 import uk.hexeption.roost.setup.ModItems;
 
@@ -71,12 +73,11 @@ public class DataChickenVanilla extends DataChicken {
 	}
 
 	public void spawnEntity(World world, BlockPos pos) {
-		//		ChickenEntity chicken = new ChickenEntity(EntityType.CHICKEN, world);
-		//		chicken.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
-		//		chicken.onInitialSpawn(world.getDifficultyForLocation(pos), null);
-		//		chicken.setGrowingAge(getLayTime());
-		//		world.spawnEntity(chicken);
-		throw new NotImplementedException("todo");
+		ChickenEntity chicken = new ChickenEntity(EntityType.CHICKEN, world);
+		chicken.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+		chicken.onInitialSpawn(((ServerWorld) world), world.getDifficultyForLocation(pos), SpawnReason.SPAWN_EGG, null, null);
+		chicken.setGrowingAge(getLayTime());
+		world.addEntity(chicken);
 	}
 
 	@Override
@@ -114,8 +115,7 @@ public class DataChickenVanilla extends DataChicken {
 
 	@Override
 	public String toString() {
-		//		return "DataChickenVanilla [name=" + getName() + "]";
-		throw new NotImplementedException("todo");
+		return "DataChickenVanilla [name=" + getName() + "]";
 	}
 
 	public String getChickenType() {

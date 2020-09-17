@@ -32,7 +32,7 @@ public class Roost {
     public static final String NAME = "Roost";
     public static final String VERSION = "@VERSION@";
 
-    public static final ItemGroup TAB = new ItemGroup("Roost") {
+    public static final ItemGroup TAB = new ItemGroup("roost") {
         @Override
         public ItemStack createIcon() {
             return new ItemStack(ModItems.CHICKEN_CATCHER.get());

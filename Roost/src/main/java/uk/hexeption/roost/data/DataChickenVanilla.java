@@ -54,7 +54,7 @@ public class DataChickenVanilla extends DataChicken {
 	}
 
 	public DataChickenVanilla() {
-		super("vanilla", "entity.Chicken.name");
+		super("vanilla", "entity.minecraft.chicken");
 	}
 
 	public boolean isEqual(DataChicken other) {

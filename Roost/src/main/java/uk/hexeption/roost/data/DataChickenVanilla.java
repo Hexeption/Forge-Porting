@@ -6,6 +6,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.passive.ChickenEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.SpawnEggItem;
@@ -13,7 +14,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import org.apache.commons.lang3.NotImplementedException;
+import uk.hexeption.roost.config.Config.Common;
 import uk.hexeption.roost.setup.ModItems;
 
 public class DataChickenVanilla extends DataChicken {
@@ -62,9 +63,8 @@ public class DataChickenVanilla extends DataChicken {
 	}
 
 	public ItemStack createDropStack() {
-		//		Item item = rand.nextInt(3) > 0 && !RoostConfig.disableEggLaying ? Items.EGG : Items.FEATHER;
-		//		return new ItemStack(item, 1);
-		throw new NotImplementedException("todo");
+		Item item = rand.nextInt(3) > 0 && !Common.disableEgglaying.get() ? Items.EGG : Items.FEATHER;
+		return new ItemStack(item, 1);
 	}
 
 	@Override

@@ -17,6 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import uk.hexeption.roost.data.ChickenType;
+import uk.hexeption.roost.tileentity.TileEntityRoost;
 
 /**
  * RoostBlock
@@ -53,7 +54,7 @@ public class RoostBlock extends ContainerBlock {
     @Nullable
     @Override
     public TileEntity createNewTileEntity(IBlockReader worldIn) {
-        return null;
+        return new TileEntityRoost();
     }
 
     @Nullable

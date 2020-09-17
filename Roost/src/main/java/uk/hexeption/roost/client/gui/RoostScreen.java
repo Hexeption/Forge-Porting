@@ -22,8 +22,11 @@ public class RoostScreen extends ContainerScreen<RoostContainer> {
 
     private ResourceLocation GUI = new ResourceLocation(Roost.MODID, "textures/gui/roost_gui.png");
 
+    private RoostContainer roostContainer;
+
     public RoostScreen(RoostContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
+        this.roostContainer = screenContainer;
         this.xSize = 176;
         this.ySize = 133;
     }
@@ -47,7 +50,14 @@ public class RoostScreen extends ContainerScreen<RoostContainer> {
         this.getMinecraft().getTextureManager().bindTexture(GUI);
         int relX = (this.field_230708_k_ - WIDTH) / 2;
         int relY = (this.field_230709_l_ - HEIGHT) / 2;
-        this.func_238464_a_(p_230450_1_, relX, relY, this.func_230927_p_(), 0, 0, this.xSize, this.ySize, 256, 256);
+        this.func_238474_b_(p_230450_1_, relX, relY, 0, 0, this.xSize, this.ySize);
+        this.func_238474_b_(p_230450_1_, relX + 48, relY + 20, 176, 0, getProgressWidth(), 16);
+    }
+
+
+    private int getProgressWidth() {
+        double progress = this.roostContainer.getProgress();
+        return progress == 0.0D ? 0 : 1 + (int) (progress * 25);
     }
 
 

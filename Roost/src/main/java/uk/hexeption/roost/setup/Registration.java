@@ -48,6 +48,6 @@ public class Registration {
     public static final RegistryObject<ContainerType<RoostContainer>> ROOST_CONTAINER = CONTAINERS.register("roost_gui", () -> IForgeContainerType.create((windowId, inv, data) -> {
         BlockPos pos = data.readBlockPos();
         World world = inv.player.getEntityWorld();
-        return new RoostContainer(windowId, world, pos, inv, inv.player);
+        return RoostContainer.createContainerClientSide(windowId, world, pos, inv, data);
     }));
 }

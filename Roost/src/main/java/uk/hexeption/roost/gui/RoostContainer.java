@@ -6,6 +6,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.math.BlockPos;
@@ -14,6 +15,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import uk.hexeption.roost.block.data.RoostStateData;
 import uk.hexeption.roost.data.DataChicken;
 import uk.hexeption.roost.setup.ModBlocks;
 import uk.hexeption.roost.setup.Registration;
@@ -27,35 +29,50 @@ import uk.hexeption.roost.tileentity.TileEntityRoost;
  */
 public class RoostContainer extends Container {
 
-    private TileEntity tileEntity;
-    private PlayerEntity playerEntity;
+    public TileEntity tileEntity;
     private IItemHandler playerInventory;
 
-    public RoostContainer(int windowId, World world, BlockPos pos, PlayerInventory playerInventory, PlayerEntity player) {
+    private RoostStateData roostStateData;
+
+    public static RoostContainer createContainerServerSide(int windowId, World world, BlockPos blockPos, PlayerInventory playerInventory, RoostStateData roostStateData) {
+        return new RoostContainer(windowId, world, blockPos, playerInventory, roostStateData);
+    }
+
+    public static RoostContainer createContainerClientSide(int windowId, World world, BlockPos blockPos, PlayerInventory playerInventory, PacketBuffer extraData) {
+
+        return new RoostContainer(windowId, world, blockPos, playerInventory, new RoostStateData());
+    }
+
+    public RoostContainer(int windowId, World world, BlockPos pos, PlayerInventory playerInventory, RoostStateData stateData) {
         super(Registration.ROOST_CONTAINER.get(), windowId);
         tileEntity = world.getTileEntity(pos);
-        this.playerEntity = player;
         this.playerInventory = new InvWrapper(playerInventory);
+        this.roostStateData = stateData;
+
+        trackIntArray(stateData);
 
         if (tileEntity != null) {
             tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
                 addSlot(new SlotItemHandler(h, 0, 64, 150));
             });
         }
-        layoutPlayerInventorySlots(8, 51);
 
         addSlot(new ChickenSlot((TileEntityRoost) tileEntity, 0, 26, 20));
 
         for (int i = 0; i < 4; ++i) {
             addSlot(new SlotReadOnly((TileEntityRoost) tileEntity, i + 1, 80 + i * 18, 20));
         }
+        layoutPlayerInventorySlots(8, 51);
     }
 
     @Override
     public boolean canInteractWith(PlayerEntity playerIn) {
-        return isWithinUsableDistance(IWorldPosCallable.of(tileEntity.getWorld(), tileEntity.getPos()), playerEntity, ModBlocks.ROOST.get());
+        return isWithinUsableDistance(IWorldPosCallable.of(tileEntity.getWorld(), tileEntity.getPos()), playerIn, ModBlocks.ROOST.get());
     }
 
+    public double getProgress() {
+        return roostStateData.timePassed / 1000.0;
+    }
 
     private int addSlotRange(IItemHandler handler, int index, int x, int y, int amount, int dx) {
         for (int i = 0; i < amount; i++) {
@@ -64,7 +81,7 @@ public class RoostContainer extends Container {
             index++;
         }
         return index;
-    }
+}
 
     private int addSlotBox(IItemHandler handler, int index, int x, int y, int horAmount, int dx, int verAmount, int dy) {
         for (int j = 0; j < verAmount; j++) {

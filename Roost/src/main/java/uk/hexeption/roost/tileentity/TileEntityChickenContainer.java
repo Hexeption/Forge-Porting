@@ -3,16 +3,24 @@ package uk.hexeption.roost.tileentity;
 import java.text.DecimalFormat;
 import javax.annotation.Nullable;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.texture.ITickable;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.ItemStackHelper;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
+import uk.hexeption.roost.block.data.RoostStateData;
 import uk.hexeption.roost.data.DataChicken;
+import uk.hexeption.roost.gui.RoostContainer;
 
 /**
  * TileEntityChickenContainer
@@ -20,7 +28,7 @@ import uk.hexeption.roost.data.DataChicken;
  * @author Hexeption admin@hexeption.co.uk
  * @since 17/09/2020 - 03:43 pm
  */
-public abstract class TileEntityChickenContainer extends TileEntity implements ISidedInventory, ITickable {
+public abstract class TileEntityChickenContainer extends TileEntity implements ISidedInventory, INamedContainerProvider, ITickableTileEntity {
 
     private static final DecimalFormat FORMATTER = new DecimalFormat("0.0%");
 
@@ -29,11 +37,12 @@ public abstract class TileEntityChickenContainer extends TileEntity implements I
     private boolean skipNextTimerReset = false;
     private int timeUntilNextDrop = 0;
     private int timeElapsed = 0;
-    private int progress = 0; // 0 - 1000
 
     private DataChicken[] chickenData = new DataChicken[getSizeChickenInventory()];
     private boolean fullOfChickens = false;
     private boolean fullOfSeeds = false;
+
+    private final RoostStateData roostStateData = new RoostStateData();
 
     public TileEntityChickenContainer(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
@@ -111,7 +120,7 @@ public abstract class TileEntityChickenContainer extends TileEntity implements I
     }
 
     private void updateProgress() {
-        progress = timeUntilNextDrop == 0 ? 0 : (timeElapsed * 1000 / timeUntilNextDrop);
+        roostStateData.set(0, timeUntilNextDrop == 0 ? 0 : (timeElapsed * 1000 / timeUntilNextDrop));
     }
 
     private int getTimeElapsed() {
@@ -126,7 +135,7 @@ public abstract class TileEntityChickenContainer extends TileEntity implements I
     }
 
     public double getProgress() {
-        return progress / 1000.0;
+        return roostStateData.timePassed / 1000.0;
     }
 
     public String getFormattedProgress() {
@@ -317,6 +326,11 @@ public abstract class TileEntityChickenContainer extends TileEntity implements I
     }
 
     @Override
+    public int getInventoryStackLimit() {
+        return 64;
+    }
+
+    @Override
     public boolean isUsableByPlayer(PlayerEntity player) {
         if (getWorld().getTileEntity(pos) != this) {
             return false;
@@ -337,4 +351,54 @@ public abstract class TileEntityChickenContainer extends TileEntity implements I
     protected abstract int requiredSeedsForDrop();
 
     protected abstract double speedMultiplier();
+
+    @Override
+    public void func_230337_a_(BlockState p_230337_1_, CompoundNBT p_230337_2_) {
+        super.func_230337_a_(p_230337_1_, p_230337_2_);
+        clear();
+        ItemStackHelper.loadAllItems(p_230337_2_, inventory);
+        timeUntilNextDrop = p_230337_2_.getInt("TimeUntilNextChild");
+        timeElapsed = p_230337_2_.getInt("TimeElapsed");
+        roostStateData.readFromNBT(p_230337_2_);
+
+        skipNextTimerReset = true;
+    }
+
+    @Override
+    public CompoundNBT write(CompoundNBT compound) {
+        super.write(compound);
+        ItemStackHelper.saveAllItems(compound, inventory);
+        compound.putInt("TimeUntilNextChild", timeUntilNextDrop);
+        compound.putInt("TimeElapsed", timeElapsed);
+        roostStateData.putIntoNBT(compound);
+        return compound;
+    }
+
+    @Nullable
+    @Override
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        CompoundNBT updateTagDescribingTileEntityState = getUpdateTag();
+        final int METADATA = 42; // arbitrary.
+        return new SUpdateTileEntityPacket(this.pos, METADATA, updateTagDescribingTileEntityState);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+        CompoundNBT updateTagDescribingTileEntityState = pkt.getNbtCompound();
+        handleUpdateTag(world.getBlockState(pkt.getPos()), updateTagDescribingTileEntityState);
+    }
+
+    @Override
+    public CompoundNBT getUpdateTag() {
+        CompoundNBT compoundNBT = new CompoundNBT();
+        write(compoundNBT);
+        return compoundNBT;
+
+    }
+
+    @Nullable
+    @Override
+    public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
+        return RoostContainer.createContainerServerSide(p_createMenu_1_, world, pos, p_createMenu_2_, roostStateData);
+    }
 }

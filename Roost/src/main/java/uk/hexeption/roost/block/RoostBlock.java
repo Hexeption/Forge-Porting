@@ -26,6 +26,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
+import uk.hexeption.roost.block.data.RoostStateData;
 import uk.hexeption.roost.data.ChickenType;
 import uk.hexeption.roost.gui.RoostContainer;
 import uk.hexeption.roost.tileentity.TileEntityRoost;
@@ -68,30 +69,36 @@ public class RoostBlock extends ContainerBlock {
         return new TileEntityRoost();
     }
 
-    @Nullable
-    @Override
-    public INamedContainerProvider getContainer(BlockState state, World worldIn, BlockPos pos) {
-        return super.getContainer(state, worldIn, pos);
-    }
-
     @Override
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         if (!worldIn.isRemote) {
             TileEntity tileEntity = worldIn.getTileEntity(pos);
             if (tileEntity instanceof TileEntityRoost) {
-                INamedContainerProvider containerProvider = new INamedContainerProvider() {
-                    @Override
-                    public ITextComponent getDisplayName() {
-                        return new TranslationTextComponent("screen.roost.roost");
-                    }
 
-                    @Nullable
-                    @Override
-                    public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
-                        return new RoostContainer(p_createMenu_1_, worldIn, pos, p_createMenu_2_, p_createMenu_3_);
-                    }
-                };
-                NetworkHooks.openGui((ServerPlayerEntity) player, containerProvider, tileEntity.getPos());
+                if (player.isSneaking() && ((TileEntityRoost) tileEntity).pullChickenOut(player)) {
+                    return ActionResultType.SUCCESS;
+                }
+
+                if (((TileEntityRoost) tileEntity).putChickenIn(player.getHeldItem(handIn))) {
+                    return ActionResultType.SUCCESS;
+                }
+
+//                INamedContainerProvider containerProvider = new INamedContainerProvider() {
+//                    @Override
+//                    public ITextComponent getDisplayName() {
+//                        return new TranslationTextComponent("screen.roost.roost");
+//                    }
+//
+//                    @Nullable
+//                    @Override
+//                    public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
+//                        return new RoostContainer(p_createMenu_1_, worldIn, pos, p_createMenu_2_, p_createMenu_3_, new RoostStateData());
+//                    }
+//                };
+                INamedContainerProvider namedContainerProvider = this.getContainer(state, worldIn, pos);
+                if (namedContainerProvider != null) {
+                    NetworkHooks.openGui((ServerPlayerEntity) player, namedContainerProvider, tileEntity.getPos());
+                }
             } else {
                 throw new IllegalStateException("Our named container provider is missing!");
             }
@@ -99,4 +106,6 @@ public class RoostBlock extends ContainerBlock {
 
         return ActionResultType.SUCCESS;
     }
+
+
 }

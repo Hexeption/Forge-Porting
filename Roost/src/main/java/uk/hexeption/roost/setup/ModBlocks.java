@@ -3,11 +3,13 @@ package uk.hexeption.roost.setup;
 import java.util.function.Supplier;
 import net.minecraft.block.AbstractBlock.Properties;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.RegistryObject;
 import uk.hexeption.roost.Roost;
+import uk.hexeption.roost.block.RoostBlock;
 
 /**
  * ModBlocks
@@ -17,7 +19,7 @@ import uk.hexeption.roost.Roost;
  */
 public class ModBlocks {
 
-    public static final RegistryObject<Block> TEST_BLOCK = register("test_block", () -> new Block(Properties.create(Material.WOOD)));
+    public static final RegistryObject<Block> ROOST = register("roost_block", () -> new RoostBlock(Properties.create(Material.WOOD).hardnessAndResistance(2.0f, 5.0f).sound(SoundType.WOOD)));
 
     public static void register() {
 

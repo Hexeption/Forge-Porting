@@ -18,6 +18,12 @@ public class DataGenerators {
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
-        generator.addProvider(new RecipesGenerator(generator));
+        if (event.includeServer()) {
+            generator.addProvider(new RecipesGenerator(generator));
+        }
+        if (event.includeClient()) {
+            generator.addProvider(new BlockStateGenerator(generator, event.getExistingFileHelper()));
+            generator.addProvider(new ItemGenerator(generator, event.getExistingFileHelper()));
+        }
     }
 }

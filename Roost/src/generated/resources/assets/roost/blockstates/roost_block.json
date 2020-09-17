@@ -1,0 +1,50 @@
+{
+  "variants": {
+    "chicken_type=vanilla,facing=down": {
+      "model": "roost:block/roost_block",
+      "x": 90
+    },
+    "chicken_type=na,facing=down": {
+      "model": "roost:block/roost_block",
+      "x": 90
+    },
+    "chicken_type=vanilla,facing=up": {
+      "model": "roost:block/roost_block",
+      "x": -90
+    },
+    "chicken_type=na,facing=up": {
+      "model": "roost:block/roost_block",
+      "x": -90
+    },
+    "chicken_type=vanilla,facing=north": {
+      "model": "roost:block/roost_block"
+    },
+    "chicken_type=na,facing=north": {
+      "model": "roost:block/roost_block"
+    },
+    "chicken_type=vanilla,facing=south": {
+      "model": "roost:block/roost_block",
+      "y": 180
+    },
+    "chicken_type=na,facing=south": {
+      "model": "roost:block/roost_block",
+      "y": 180
+    },
+    "chicken_type=vanilla,facing=west": {
+      "model": "roost:block/roost_block",
+      "y": 270
+    },
+    "chicken_type=na,facing=west": {
+      "model": "roost:block/roost_block",
+      "y": 270
+    },
+    "chicken_type=vanilla,facing=east": {
+      "model": "roost:block/roost_block",
+      "y": 90
+    },
+    "chicken_type=na,facing=east": {
+      "model": "roost:block/roost_block",
+      "y": 90
+    }
+  }
+}

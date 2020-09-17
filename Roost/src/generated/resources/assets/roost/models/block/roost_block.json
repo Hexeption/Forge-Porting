@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "roost:block/roost",
+    "up": "roost:block/roost",
+    "north": "roost:block/roost",
+    "south": "roost:block/roost",
+    "east": "roost:block/roost",
+    "west": "roost:block/roost"
+  }
+}

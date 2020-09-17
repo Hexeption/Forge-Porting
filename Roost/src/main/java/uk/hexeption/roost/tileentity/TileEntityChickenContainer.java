@@ -24,7 +24,7 @@ public abstract class TileEntityChickenContainer extends TileEntity implements I
 
     private static final DecimalFormat FORMATTER = new DecimalFormat("0.0%");
 
-    private NonNullList<ItemStack> inventory = NonNullList.<ItemStack>withSize(getSizeInventory(), ItemStack.EMPTY);
+    public NonNullList<ItemStack> inventory = NonNullList.<ItemStack>withSize(getSizeInventory(), ItemStack.EMPTY);
     private boolean mightNeedToUpdateChickenInfo = true;
     private boolean skipNextTimerReset = false;
     private int timeUntilNextDrop = 0;

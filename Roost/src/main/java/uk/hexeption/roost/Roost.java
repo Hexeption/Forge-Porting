@@ -7,10 +7,12 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import uk.hexeption.roost.config.Config;
 import uk.hexeption.roost.config.Config.Common;
+import uk.hexeption.roost.setup.ClientSetup;
 import uk.hexeption.roost.setup.ModItems;
 import uk.hexeption.roost.setup.Registration;
 
@@ -35,6 +37,8 @@ public class Roost {
     public Roost() {
         Registration.register();
         Config.init();
+
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSetup::init);
 
         if (Common.disableEgglaying.get()) {
             MinecraftForge.EVENT_BUS.register(EggPreventer.class);

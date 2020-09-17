@@ -4,12 +4,16 @@ import net.minecraft.block.Block;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import uk.hexeption.roost.Roost;
+import uk.hexeption.roost.gui.RoostContainer;
 import uk.hexeption.roost.tileentity.TileEntityRoost;
 
 /**
@@ -41,9 +45,9 @@ public class Registration {
         .register("roost", () -> TileEntityType.Builder.create(TileEntityRoost::new, ModBlocks.ROOST.get()).build(null));
 
     // Containers
-    //    public static final RegistryObject<ContainerType<ChestContainer>> CHANGEME_CONTAINER = CONTAINERS.register("roost", () -> IForgeContainerType.create((windowId, inv, data) -> {
-    //        BlockPos pos = data.readBlockPos();
-    //        World world = inv.player.getEntityWorld();
-    //        return new ChestContainer(windowId,world, pos, inv, inv.player);
-    //    }));
+    public static final RegistryObject<ContainerType<RoostContainer>> ROOST_CONTAINER = CONTAINERS.register("roost_gui", () -> IForgeContainerType.create((windowId, inv, data) -> {
+        BlockPos pos = data.readBlockPos();
+        World world = inv.player.getEntityWorld();
+        return new RoostContainer(windowId, world, pos, inv, inv.player);
+    }));
 }

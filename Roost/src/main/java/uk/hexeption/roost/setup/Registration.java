@@ -1,6 +1,7 @@
 package uk.hexeption.roost.setup;
 
 import net.minecraft.block.Block;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -22,17 +23,27 @@ public class Registration {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, Roost.MODID);
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Roost.MODID);
     public static final DeferredRegister<TileEntityType<?>> TILES = DeferredRegister.create(ForgeRegistries.TILE_ENTITIES, Roost.MODID);
+    public static final DeferredRegister<ContainerType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, Roost.MODID);
 
     public static void register() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
         TILES.register(modEventBus);
+        CONTAINERS.register(modEventBus);
 
         ModItems.register();
         ModBlocks.register();
     }
 
-    public static final RegistryObject<TileEntityType<TileEntityRoost>> ROOST_TILE_ENTITY = TILES.register("roost", () -> TileEntityType.Builder.create(TileEntityRoost::new, ModBlocks.ROOST.get()).build(null));
+    // Tile Entities
+    public static final RegistryObject<TileEntityType<TileEntityRoost>> ROOST_TILE_ENTITY = TILES
+        .register("roost", () -> TileEntityType.Builder.create(TileEntityRoost::new, ModBlocks.ROOST.get()).build(null));
 
+    // Containers
+    //    public static final RegistryObject<ContainerType<ChestContainer>> CHANGEME_CONTAINER = CONTAINERS.register("roost", () -> IForgeContainerType.create((windowId, inv, data) -> {
+    //        BlockPos pos = data.readBlockPos();
+    //        World world = inv.player.getEntityWorld();
+    //        return new ChestContainer(windowId,world, pos, inv, inv.player);
+    //    }));
 }

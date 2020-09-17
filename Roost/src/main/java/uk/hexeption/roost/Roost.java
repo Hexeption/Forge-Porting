@@ -1,11 +1,16 @@
 package uk.hexeption.roost;
 
+import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import uk.hexeption.roost.config.Config;
+import uk.hexeption.roost.config.Config.Common;
 import uk.hexeption.roost.setup.ModItems;
 import uk.hexeption.roost.setup.Registration;
 
@@ -30,5 +35,23 @@ public class Roost {
     public Roost() {
         Registration.register();
         Config.init();
+
+        if (Common.disableEgglaying.get()) {
+            MinecraftForge.EVENT_BUS.register(EggPreventer.class);
+        }
+    }
+
+    class EggPreventer {
+
+        @SubscribeEvent
+        public void onLivingUpdate(LivingUpdateEvent event) {
+            if (event.getEntity().getClass().equals(ChickenEntity.class)) {
+                ChickenEntity chickenEntity = (ChickenEntity) event.getEntity();
+                if (chickenEntity.timeUntilNextEgg <= 1) {
+                    chickenEntity.timeUntilNextEgg = 999999999;
+                }
+            }
+
+        }
     }
 }

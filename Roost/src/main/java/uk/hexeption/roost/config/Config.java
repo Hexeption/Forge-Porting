@@ -12,13 +12,16 @@ import net.minecraftforge.fml.config.ModConfig.Type;
  */
 public class Config {
 
-    public static final class Common {
+    public static void init() {
+        ModLoadingContext.get().registerConfig(Type.COMMON, Common.spec);
+    }
 
-        static final ForgeConfigSpec spec;
+    public static final class Common {
 
         public static final ForgeConfigSpec.DoubleValue roostSpeed;
         public static final ForgeConfigSpec.DoubleValue breaderSpeed;
         public static final ForgeConfigSpec.BooleanValue disableEgglaying;
+        static final ForgeConfigSpec spec;
 
         static {
             ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -29,10 +32,6 @@ public class Config {
 
             spec = builder.build();
         }
-    }
-
-    public static void init() {
-        ModLoadingContext.get().registerConfig(Type.COMMON, Common.spec);
     }
 
 

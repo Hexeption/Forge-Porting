@@ -19,177 +19,175 @@ import uk.hexeption.roost.setup.ModItems;
 
 public class DataChicken {
 
-	public static final String CHICKEN_ID_KEY = "Chicken";
-	private static final Pattern REMOVE_CHICKENS_PREFIX = Pattern.compile("_?chick(en)?s?_?");
+    public static final String CHICKEN_ID_KEY = "Chicken";
+    private static final Pattern REMOVE_CHICKENS_PREFIX = Pattern.compile("_?chick(en)?s?_?");
+    protected String i18nName;
+    protected Random rand = new Random();
+    private final String name;
 
-	public static List<DataChicken> getAllChickens() {
-		List<DataChicken> chickens = new LinkedList<>();
-		DataChickenVanilla.addAllChickens(chickens);
-		return chickens;
-	}
+    public DataChicken(String name, String i18nName) {
+        super();
+        String underscoredName = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, name);
+        String cleanedName = REMOVE_CHICKENS_PREFIX.matcher(underscoredName).replaceAll("");
+        this.name = cleanedName;
+        this.i18nName = i18nName;
+    }
 
-	public static DataChicken getDataFromTooltipNBT(CompoundNBT tag) {
-		if (tag == null) {
-			return null;
-		}
+    public static List<DataChicken> getAllChickens() {
+        List<DataChicken> chickens = new LinkedList<>();
+        DataChickenVanilla.addAllChickens(chickens);
+        return chickens;
+    }
 
-		DataChicken data = null;
+    public static DataChicken getDataFromTooltipNBT(CompoundNBT tag) {
+        if (tag == null) {
+            return null;
+        }
 
-		if (data == null) {
-			data = DataChickenVanilla.getDataFromTooltipNBT(tag);
-		}
+        DataChicken data = null;
 
-		return data;
-	}
+        if (data == null) {
+            data = DataChickenVanilla.getDataFromTooltipNBT(tag);
+        }
 
-	public static DataChicken getDataFromEntity(Entity entity) {
-		if (entity == null) {
-			return null;
-		}
+        return data;
+    }
 
-		DataChicken data = null;
+    public static DataChicken getDataFromEntity(Entity entity) {
+        if (entity == null) {
+            return null;
+        }
 
-		if (data == null) {
-			data = DataChickenVanilla.getDataFromEntity(entity);
-		}
+        DataChicken data = null;
 
-		return data;
-	}
+        if (data == null) {
+            data = DataChickenVanilla.getDataFromEntity(entity);
+        }
 
-	public static DataChicken getDataFromStack(ItemStack stack) {
-		if (!isChicken(stack)) {
-			return null;
-		}
+        return data;
+    }
 
-		DataChicken data = null;
+    public static DataChicken getDataFromStack(ItemStack stack) {
+        if (!isChicken(stack)) {
+            return null;
+        }
 
-		if (data == null) {
-			data = DataChickenVanilla.getDataFromStack(stack);
-		}
+        DataChicken data = null;
 
-		return data;
-	}
+        if (data == null) {
+            data = DataChickenVanilla.getDataFromStack(stack);
+        }
 
-	public static DataChicken getDataFromName(String name) {
-		DataChicken data = null;
+        return data;
+    }
 
-		if (data == null) {
-			data = DataChickenVanilla.getDataFromName(name);
-		}
+    public static DataChicken getDataFromName(String name) {
+        DataChicken data = null;
 
-		return data;
-	}
+        if (data == null) {
+            data = DataChickenVanilla.getDataFromName(name);
+        }
 
-	public static void getItemChickenSubItems(ItemGroup tab, List<ItemStack> subItems) {
-		for (DataChicken chicken : getAllChickens()) {
-			subItems.add(chicken.buildChickenStack());
-		}
-	}
+        return data;
+    }
 
-	public static boolean isChicken(ItemStack stack) {
-		return stack.getItem() == ModItems.CHICKEN_ITEM.get();
-	}
+    public static void getItemChickenSubItems(ItemGroup tab, List<ItemStack> subItems) {
+        for (DataChicken chicken : getAllChickens()) {
+            subItems.add(chicken.buildChickenStack());
+        }
+    }
 
-	private String name;
-	protected String i18nName;
+    public static boolean isChicken(ItemStack stack) {
+        return stack.getItem() == ModItems.CHICKEN_ITEM.get();
+    }
 
-	protected Random rand = new Random();
+    private static ItemStack createChildStack(DataChicken chickenA, DataChicken chickenB, World world) {
+        if (chickenA.getClass() != chickenB.getClass()) {
+            return chickenA.buildChickenStack();
+        }
+        ChickenEntity parentA = chickenA.buildEntity(world);
+        ChickenEntity parentB = chickenB.buildEntity(world);
+        if (parentA == null || parentB == null) {
+            return ItemStack.EMPTY;
+        }
+        DataChicken childData = DataChicken.getDataFromEntity(parentA.func_241840_a((ServerWorld) world, parentB));
+        if (childData == null) {
+            return ItemStack.EMPTY;
+        }
+        return childData.buildChickenStack();
+    }
 
-	public DataChicken(String name, String i18nName) {
-		super();
-		String underscoredName = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, name);
-		String cleanedName = REMOVE_CHICKENS_PREFIX.matcher(underscoredName).replaceAll("");
-		this.name = cleanedName;
-		this.i18nName = i18nName;
-	}
+    public void addInfoToTooltip(List<ITextComponent> tooltip) {
+    }
 
-	public void addInfoToTooltip(List<ITextComponent> tooltip) {
-	}
+    public boolean hasParents() {
+        return false;
+    }
 
-	public boolean hasParents() {
-		return false;
-	}
+    public List<ItemStack> buildParentChickenStack() {
+        return null;
+    }
 
-	public List<ItemStack> buildParentChickenStack() {
-		return null;
-	}
+    public ItemStack buildChickenStack() {
+        return ItemStack.EMPTY;
+    }
 
-	public ItemStack buildChickenStack() {
-		return ItemStack.EMPTY;
-	}
+    public ItemStack buildCaughtFromStack() {
+        return ItemStack.EMPTY;
+    }
 
-	public ItemStack buildCaughtFromStack() {
-		return ItemStack.EMPTY;
-	}
+    public ChickenEntity buildEntity(World world) {
+        return null;
+    }
 
-	public ChickenEntity buildEntity(World world) {
-		return null;
-	}
+    public CompoundNBT buildTooltipNBT() {
+        return null;
+    }
 
-	public CompoundNBT buildTooltipNBT() {
-		return null;
-	}
+    public void spawnEntity(World world, BlockPos pos) {
+    }
 
-	public void spawnEntity(World world, BlockPos pos) {
-	}
+    public String getChickenType() {
+        return null;
+    }
 
-	public String getChickenType() {
-		return null;
-	}
+    public String getTextureName() {
+        return null;
+    }
 
-	public String getTextureName() {
-		return null;
-	}
+    public ItemStack createChildStack(DataChicken other, World world) {
+        if (rand.nextBoolean()) {
+            return createChildStack(this, other, world);
+        }
+        return createChildStack(other, this, world);
+    }
 
-	private static ItemStack createChildStack(DataChicken chickenA, DataChicken chickenB, World world) {
-		if (chickenA.getClass() != chickenB.getClass()) {
-			return chickenA.buildChickenStack();
-		}
-		ChickenEntity parentA = chickenA.buildEntity(world);
-		ChickenEntity parentB = chickenB.buildEntity(world);
-		if (parentA == null || parentB == null) {
-			return ItemStack.EMPTY;
-		}
-		DataChicken childData = DataChicken.getDataFromEntity(parentA.func_241840_a((ServerWorld) world, parentB));
-		if (childData == null) {
-			return ItemStack.EMPTY;
-		}
-		return childData.buildChickenStack();
-	}
+    public ItemStack createDropStack() {
+        return ItemStack.EMPTY;
+    }
 
-	public ItemStack createChildStack(DataChicken other, World world) {
-		if (rand.nextBoolean()) {
-			return createChildStack(this, other, world);
-		}
-		return createChildStack(other, this, world);
-	}
+    public int getAddedTime(ItemStack stack) {
+        return Math.max(0, stack.getCount());
+    }
 
-	public ItemStack createDropStack() {
-		return ItemStack.EMPTY;
-	}
+    public int getLayTime() {
+        return 6000 + rand.nextInt(6000);
+    }
 
-	public int getAddedTime(ItemStack stack) {
-		return Math.max(0, stack.getCount());
-	}
+    public String getName() {
+        return name;
+    }
 
-	public int getLayTime() {
-		return 6000 + rand.nextInt(6000);
-	}
+    public ITextComponent getDisplayName() {
+        return new TranslationTextComponent(i18nName);
+    }
 
-	public String getName() {
-		return name;
-	}
+    public boolean isEqual(DataChicken other) {
+        return true;
+    }
 
-	public ITextComponent getDisplayName() {
-		return new TranslationTextComponent(i18nName);
-	}
-
-	public boolean isEqual(DataChicken other) {
-		return true;
-	}
-
-	public ITextComponent getDisplaySummary() {
-		return getDisplayName();
-	}
+    public ITextComponent getDisplaySummary() {
+        return getDisplayName();
+    }
 
 }

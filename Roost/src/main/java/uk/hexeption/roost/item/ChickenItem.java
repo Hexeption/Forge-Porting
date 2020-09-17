@@ -23,7 +23,7 @@ import uk.hexeption.roost.data.DataChicken;
  */
 public class ChickenItem extends Item {
 
-    private static String I18N_NAME = "entity.minecraft.chicken";
+    private static final String I18N_NAME = "entity.minecraft.chicken";
 
     public ChickenItem(Properties properties) {
         super(properties);
